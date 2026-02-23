@@ -56,6 +56,38 @@ curl -s -X DELETE \
   https://api.3clickclaw.com/api/admin/blog/posts/{locale}/{slug}
 ```
 
+### Upload an image
+
+Upload a base64-encoded image. Returns the public URL to use in the post's `image` field or inline markdown `![alt](url)`.
+
+Accepts `data` (base64 string or data URI), optional `mimeType` (default: `image/png`), and optional `filename`.
+
+```bash
+curl -s -X POST \
+  -H "Authorization: Bearer $BLOG_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "data": "<base64-encoded-image-data>",
+    "mimeType": "image/png",
+    "filename": "my-blog-hero"
+  }' \
+  https://api.3clickclaw.com/api/admin/blog/upload-image
+```
+
+Response: `{"url":"/blog/my-blog-hero.png","fileName":"my-blog-hero.png","size":12345}`
+
+You can also send a data URI directly: `"data": "data:image/png;base64,iVBOR..."` — the mime type is auto-detected.
+
+**Supported formats:** PNG, JPEG, WebP, GIF, SVG. **Max size:** 5 MB.
+
+#### Image workflow with AI image generation
+
+If you have an AI image generator available (e.g., OpenClaw's built-in image generation):
+1. Generate the image
+2. Get the image as base64
+3. Upload it via the upload-image endpoint
+4. Use the returned `url` in the blog post's `image` frontmatter field
+
 ### Trigger rebuild (makes changes live)
 
 ```bash
